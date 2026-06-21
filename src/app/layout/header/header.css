@@ -1,0 +1,96 @@
+.corp-header {
+  height: 60px;
+  background: var(--header);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+/* Logo area: the green square + company name */
+.corp-logo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.corp-logo .sq {
+  width: 30px;
+  height: 30px;
+  background: var(--emerald);
+  border-radius: 3px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: #fff;
+}
+
+.corp-logo .t1 {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.corp-logo .t2 {
+  font-size: 10.5px;
+  color: #cbd5e1;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* Right side: env badge + user */
+.corp-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.corp-env {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(21, 128, 61, 0.25);
+  color: #86efac;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.corp-divider {
+  width: 1px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.corp-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 5px;
+}
+
+.corp-user:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.corp-user .av {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #6b7280;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}

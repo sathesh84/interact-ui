@@ -1,0 +1,42 @@
+.topnav {
+  background: var(--header-2);
+  height: 38px;
+  display: flex;
+  align-items: stretch;      /* stretch children to full height of the nav */
+  padding: 0 20px;
+  position: sticky;
+  top: 60px;                 /* sticks just below the 60px header */
+  z-index: 49;
+}
+
+.topnav-item {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  color: #9ca3af;            /* gray — inactive state */
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;  /* invisible border — space reserved for active state */
+  letter-spacing: 0.02em;
+  text-decoration: none;     /* remove underline from links */
+  transition: color 0.1s, background 0.1s;
+}
+
+.topnav-item:hover {
+  color: #e5e7eb;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* "active" class is added automatically by routerLinkActive */
+.topnav-item.active {
+  color: #fff;
+  border-bottom-color: var(--emerald);   /* green underline */
+  background: rgba(21, 128, 61, 0.12);   /* subtle green glow */
+}
+
+.topnav-item svg {
+  width: 15px;
+  height: 15px;
+  margin-right: 7px;
+}
