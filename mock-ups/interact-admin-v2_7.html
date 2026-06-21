@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INTERACT Admin — GSS Livewire</title>
+<style>
+  :root {
+    --emerald: #15803d;        /* emerald-700 primary action */
+    --emerald-hover: #166534;  /* emerald-800 */
+    --emerald-soft: #dcfce7;   /* emerald-100 */
+    --emerald-text: #15803d;
+    --header: #374151;         /* gray-700 dark header */
+    --header-2: #1f2937;       /* gray-800 */
+    --canvas: #f3f4f6;         /* gray-100 */
+    --card: #ffffff;
+    --border: #d1d5db;         /* gray-300 */
+    --border-soft: #e5e7eb;    /* gray-200 */
+    --text: #111827;           /* gray-900 */
+    --text-2: #4b5563;         /* gray-600 */
+    --text-3: #6b7280;         /* gray-500 */
+    --text-faint: #9ca3af;     /* gray-400 */
+    --success: #16a34a;
+    --warning: #f59e0b;
+    --error: #dc2626;
+    --row-hover: #f9fafb;
+    --row-stripe: #fafafa;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--canvas);
+    color: var(--text);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ CORPORATE HEADER ============ */
+  .corp-header {
+    height: 60px; background: var(--header); color: #fff;
+    display: flex; align-items: center; padding: 0 20px;
+    position: sticky; top: 0; z-index: 50; gap: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  }
+  .corp-logo { display: flex; align-items: center; gap: 13px; }
+  .corp-logo .sq {
+    width: 30px; height: 30px; background: var(--emerald);
+    border-radius: 3px; display: grid; place-items: center;
+    font-weight: 800; font-size: 13px; letter-spacing: -0.04em; color: #fff;
+  }
+  .corp-logo .titles { line-height: 1.15; }
+  .corp-logo .t1 { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+  .corp-logo .t2 { font-size: 10.5px; color: #cbd5e1; letter-spacing: 0.06em; font-weight: 500; }
+  .corp-right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+  .corp-env {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em;
+    background: rgba(21,128,61,0.25); color: #86efac; padding: 3px 9px;
+    border-radius: 3px; border: 1px solid rgba(34,197,94,0.35);
+  }
+  .corp-user { display: flex; align-items: center; gap: 9px; font-size: 12.5px; }
+  .corp-user .av {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #6b7280; display: grid; place-items: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .corp-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.18); }
+
+  /* ============ PROFILE DROPDOWN ============ */
+  .profile-wrap { position: relative; }
+  .corp-user { cursor: pointer; padding: 4px 6px; border-radius: 5px; }
+  .corp-user:hover { background: rgba(255,255,255,0.08); }
+  .corp-user .chev { width: 14px; height: 14px; color: #cbd5e1; transition: transform 0.15s; }
+  .profile-wrap.open .corp-user .chev { transform: rotate(180deg); }
+  .profile-menu {
+    position: absolute; right: 0; top: calc(100% + 8px); width: 230px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 7px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18); padding: 6px; display: none; z-index: 60;
+    color: var(--text);
+  }
+  .profile-wrap.open .profile-menu { display: block; animation: pop 0.13s ease; }
+  .pm-head { display: flex; align-items: center; gap: 10px; padding: 8px 8px 10px; border-bottom: 1px solid var(--border-soft); margin-bottom: 6px; }
+  .pm-head .av { background: #6b7280; }
+  .pm-name { font-size: 12.5px; font-weight: 700; }
+  .pm-role { font-size: 11px; color: var(--text-3); }
+  .pm-item { display: flex; align-items: center; gap: 10px; padding: 8px 8px; border-radius: 5px; font-size: 12.5px; font-weight: 500; cursor: pointer; color: var(--text-2); }
+  .pm-item:hover { background: var(--row-hover); color: var(--text); }
+  .pm-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .pm-sep { height: 1px; background: var(--border-soft); margin: 6px 4px; }
+
+  /* portal tab icons inline */
+  .topnav-item svg { display: inline-block; vertical-align: middle; }
+
+  /* ============ WELCOME HERO ============ */
+  .welcome-hero { margin-bottom: 18px; }
+  .welcome-hero h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .welcome-hero p { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+
+  /* ============ WELCOME SPLIT ============ */
+  .welcome-split { display: grid; grid-template-columns: 1fr 380px; gap: 18px; align-items: start; }
+  .welcome-search-col { min-width: 0; }
+  .ws-searchbar { display: flex; gap: 8px; margin-bottom: 12px; }
+  .ws-result-hint { font-size: 11.5px; color: var(--text-faint); margin-top: 8px; }
+  .ws-name { font-weight: 600; }
+  .ws-typebadge-app { background: #dbeafe; color: #1e40af; }
+  .ws-typebadge-team { background: var(--emerald-soft); color: #166534; }
+  .ws-view-btn { font-size: 11px; color: var(--emerald); font-weight: 600; cursor: pointer; }
+  .ws-view-btn:hover { text-decoration: underline; }
+  .ws-empty { padding: 36px; text-align: center; color: var(--text-faint); font-size: 12.5px; }
+
+  /* ============ CHATBOT ============ */
+  .chatbot {
+    background: var(--card); border: 1px solid var(--border); border-radius: 7px;
+    display: flex; flex-direction: column; height: 560px; position: sticky; top: 112px; overflow: hidden;
+  }
+  .cb-head { display: flex; align-items: center; gap: 10px; padding: 13px 15px; border-bottom: 1px solid var(--border); background: #f9fafb; }
+  .cb-bot-av { width: 34px; height: 34px; border-radius: 8px; background: var(--emerald); display: grid; place-items: center; flex-shrink: 0; }
+  .cb-bot-av svg { width: 19px; height: 19px; color: #fff; }
+  .cb-title { font-size: 13px; font-weight: 700; }
+  .cb-status { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
+  .cb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+  .cb-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; background: #fcfcfd; }
+  .cb-msg { display: flex; gap: 8px; max-width: 100%; }
+  .cb-msg.user { flex-direction: row-reverse; }
+  .cb-bubble { padding: 9px 12px; border-radius: 11px; font-size: 12.5px; line-height: 1.45; max-width: 85%; }
+  .cb-msg.bot .cb-bubble { background: #fff; border: 1px solid var(--border); border-top-left-radius: 3px; }
+  .cb-msg.user .cb-bubble { background: var(--emerald); color: #fff; border-top-right-radius: 3px; }
+  .cb-bubble em { color: var(--emerald); font-style: normal; font-weight: 600; }
+  .cb-msg.user .cb-bubble em { color: #d1fae5; }
+
+  /* structured support card inside chat */
+  .cb-card { background: #fff; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; width: 100%; max-width: 100%; }
+  .cb-card-head { padding: 10px 12px; background: var(--emerald-soft); border-bottom: 1px solid #bbf7d0; }
+  .cb-card-head .nm { font-size: 13px; font-weight: 700; color: #14532d; }
+  .cb-card-head .ty { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #166534; }
+  .cb-card-row { display: flex; align-items: flex-start; gap: 9px; padding: 8px 12px; border-bottom: 1px solid var(--border-soft); font-size: 12px; }
+  .cb-card-row:last-child { border-bottom: none; }
+  .cb-card-row svg { width: 14px; height: 14px; color: var(--text-faint); flex-shrink: 0; margin-top: 1px; }
+  .cb-card-row .lbl { color: var(--text-3); width: 78px; flex-shrink: 0; }
+  .cb-card-row .val { font-weight: 500; word-break: break-word; }
+  .cb-escl { display: flex; flex-direction: column; gap: 4px; }
+  .cb-escl .e { display: flex; align-items: center; gap: 7px; }
+  .cb-escl .e .lv { font-size: 9px; font-weight: 700; color: #fff; background: var(--text-faint); border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
+  .cb-escl .e.l1 .lv { background: var(--emerald); }
+  .cb-escl .e.l2 .lv { background: #1d4ed8; }
+  .cb-escl .e.l3 .lv { background: #b45309; }
+
+  .cb-input { display: flex; gap: 8px; padding: 11px 12px; border-top: 1px solid var(--border); }
+  .cb-input input { flex: 1; border: 1px solid var(--border); border-radius: 18px; padding: 8px 14px; font-size: 12.5px; font-family: var(--sans); }
+  .cb-input input:focus { outline: none; border-color: var(--emerald); box-shadow: 0 0 0 2px var(--emerald-soft); }
+  .cb-send { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--emerald); color: #fff; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; }
+  .cb-send:hover { background: var(--emerald-hover); }
+  .cb-send svg { width: 16px; height: 16px; }
+  .cb-suggest { display: flex; gap: 6px; padding: 0 12px 12px; flex-wrap: wrap; }
+  .cb-chip { font-size: 11px; padding: 4px 10px; border-radius: 14px; background: #f3f4f6; border: 1px solid var(--border-soft); cursor: pointer; color: var(--text-2); font-weight: 500; }
+  .cb-chip:hover { background: var(--emerald-soft); border-color: #bbf7d0; color: #166534; }
+
+  @media (max-width: 1040px) {
+    .welcome-split { grid-template-columns: 1fr; }
+    .chatbot { height: 480px; position: static; }
+  }
+
+  /* ============ PRIMARY NAV ============ */
+  .topnav {
+    background: var(--header-2); height: 38px; display: flex;
+    align-items: stretch; padding: 0 20px; position: sticky; top: 60px; z-index: 49;
+  }
+  .topnav-item {
+    display: flex; align-items: center; padding: 0 18px;
+    color: #9ca3af; font-size: 12.5px; font-weight: 600; cursor: pointer;
+    border-bottom: 2px solid transparent; letter-spacing: 0.02em;
+    transition: color 0.1s, background 0.1s;
+  }
+  .topnav-item:hover { color: #e5e7eb; background: rgba(255,255,255,0.04); }
+  .topnav-item.active { color: #fff; border-bottom-color: var(--emerald); background: rgba(21,128,61,0.12); }
+
+  /* ============ BREADCRUMB BAR ============ */
+  .crumbbar {
+    background: var(--card); border-bottom: 1px solid var(--border);
+    padding: 8px 22px; display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text-3); position: sticky; top: 98px; z-index: 40;
+  }
+  .crumbbar .c { cursor: pointer; }
+  .crumbbar .c:hover { color: var(--emerald); }
+  .crumbbar .sep { color: var(--text-faint); }
+  .crumbbar .cur { color: var(--text); font-weight: 600; }
+
+  /* ============ CONTENT ============ */
+  .content { padding: 18px 22px; max-width: 1500px; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ============ PAGE HEADER ============ */
+  .page-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; gap: 16px;
+  }
+  .page-head h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+  .page-head .meta { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .head-actions { display: flex; gap: 8px; align-items: center; }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+    color: var(--text); font-family: var(--sans); white-space: nowrap;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .btn:hover { background: var(--row-hover); border-color: var(--text-faint); }
+  .btn svg { width: 14px; height: 14px; }
+  .btn-primary { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+  .btn-primary:hover { background: var(--emerald-hover); border-color: var(--emerald-hover); }
+  .btn-sm { padding: 4px 9px; font-size: 11.5px; }
+  .btn-xs { padding: 3px 7px; font-size: 11px; }
+
+  /* ============ SEARCH / TOOLBAR ============ */
+  .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .search {
+    position: relative; flex: 1; min-width: 240px; max-width: 420px;
+  }
+  .search input {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: 4px; padding: 7px 10px 7px 31px; font-size: 12px;
+    color: var(--text); font-family: var(--sans);
+  }
+  .search input::placeholder { color: var(--text-faint); }
+  .search input:focus { outline: none; border-color: var(--emerald); box-shadow: 0 0 0 2px var(--emerald-soft); }
+  .search svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-faint); }
+  .select {
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 7px 28px 7px 10px; font-size: 12px; color: var(--text); cursor: pointer;
+    font-family: var(--sans); appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 9px center;
+  }
+  .select:focus { outline: none; border-color: var(--emerald); }
+
+  /* ============ TABLES (dense) ============ */
+  .grid-card { background: var(--card); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    text-align: left; padding: 8px 12px; font-weight: 700; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2);
+    background: #f9fafb; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  tbody td { padding: 7px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--row-hover); }
+  .clickable { cursor: pointer; }
+
+  /* ============ BADGES ============ */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px;
+    border-radius: 3px; font-size: 11px; font-weight: 600;
+  }
+  .b-green { background: var(--emerald-soft); color: #166534; }
+  .b-gray { background: #f3f4f6; color: #4b5563; border: 1px solid var(--border-soft); }
+  .b-amber { background: #fef3c7; color: #92400e; }
+  .b-red { background: #fee2e2; color: #991b1b; }
+  .b-blue { background: #dbeafe; color: #1e40af; }
+  .b-num { background: #374151; color: #fff; font-variant-numeric: tabular-nums; }
+
+  .dot-active { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.on { background: var(--success); }
+  .dot.off { background: var(--text-faint); }
+
+  /* ============ STATUS TOGGLE ============ */
+  .toggle {
+    position: relative; width: 34px; height: 19px; border-radius: 10px;
+    background: #cbd5e1; cursor: pointer; transition: background 0.15s; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--emerald); }
+  .toggle::after {
+    content: ''; position: absolute; width: 15px; height: 15px; border-radius: 50%;
+    background: #fff; top: 2px; left: 2px; transition: left 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  }
+  .toggle.on::after { left: 17px; }
+
+  /* ============ ACTION ICONS ============ */
+  .row-actions { display: flex; gap: 3px; }
+  .iconbtn { width: 26px; height: 26px; border-radius: 4px; display: grid; place-items: center; cursor: pointer; color: var(--text-3); border: 1px solid transparent; }
+  .iconbtn:hover { background: #f3f4f6; color: var(--text); border-color: var(--border-soft); }
+  .iconbtn.danger:hover { color: var(--error); background: #fee2e2; border-color: #fecaca; }
+  .iconbtn svg { width: 14px; height: 14px; }
+
+  /* ============ TEAM CONTEXT HEADER ============ */
+  .team-ctx {
+    background: var(--card); border: 1px solid var(--border); border-radius: 5px;
+    padding: 13px 18px; display: flex; align-items: center; gap: 16px; margin-bottom: 0;
+    border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+  }
+  .team-ctx .back {
+    width: 30px; height: 30px; border-radius: 4px; border: 1px solid var(--border);
+    display: grid; place-items: center; cursor: pointer; color: var(--text-2);
+  }
+  .team-ctx .back:hover { background: var(--row-hover); }
+  .team-ctx .tname { font-size: 16px; font-weight: 700; }
+  .team-ctx .tsub { font-size: 11.5px; color: var(--text-3); margin-top: 1px; }
+  .team-ctx .ctx-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .team-ctx .toggle-lbl { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text-2); }
+
+  /* ============ TABS ============ */
+  .tabs {
+    background: var(--card); border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+    display: flex; padding: 0 8px; gap: 0; overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 16px; font-size: 12.5px; font-weight: 600; color: var(--text-3);
+    cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--emerald); border-bottom-color: var(--emerald); }
+  .tab svg { width: 14px; height: 14px; }
+  .tab .pill { background: #374151; color: #fff; font-size: 10px; font-weight: 700; padding: 0px 6px; border-radius: 8px; }
+
+  .tab-body {
+    background: var(--card); border: 1px solid var(--border); border-top: none;
+    border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; padding: 18px;
+  }
+  .tabpane { display: none; }
+  .tabpane.active { display: block; }
+
+  /* ============ FORMS ============ */
+  .form-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 12px; }
+  .frow { display: grid; gap: 14px; margin-bottom: 14px; }
+  .frow.c2 { grid-template-columns: 1fr 1fr; }
+  .frow.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .frow.c4 { grid-template-columns: repeat(4,1fr); }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 5px; }
+  .field label .req { color: var(--error); }
+  .field input, .field textarea, .field select {
+    width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 7px 10px; font-size: 12.5px; color: var(--text); font-family: var(--sans);
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--emerald); box-shadow: 0 0 0 2px var(--emerald-soft); }
+  .field input:disabled { background: #f3f4f6; color: var(--text-3); }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field select {
+    appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .field .hint { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+  .form-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-soft); }
+
+  .checks { display: flex; gap: 18px; flex-wrap: wrap; }
+  .check { display: flex; align-items: center; gap: 7px; font-size: 12.5px; cursor: pointer; }
+  .check input { width: 15px; height: 15px; accent-color: var(--emerald); cursor: pointer; }
+
+  /* ============ AVATAR INLINE ============ */
+  .uava { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 9.5px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .user-cell { display: flex; align-items: center; gap: 8px; }
+
+  /* color rotation for avatars */
+  .av0{background:#0e7490}.av1{background:#7c3aed}.av2{background:#be185d}.av3{background:#15803d}.av4{background:#b45309}.av5{background:#1d4ed8}.av6{background:#9f1239}
+
+  /* ============ SUB TOOLBAR ============ */
+  .sub-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
+  .sub-toolbar h3 { font-size: 13px; font-weight: 700; }
+
+  /* ============ SNOW FETCH BAR + TRANSFER ============ */
+  .ag-fetchbar { display: flex; gap: 16px; align-items: flex-end; margin-bottom: 10px; flex-wrap: wrap; }
+  .ag-hint {
+    display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text-3);
+    background: #f9fafb; border: 1px solid var(--border-soft); border-radius: 4px;
+    padding: 8px 12px; margin-bottom: 16px;
+  }
+  .ag-hint svg { width: 15px; height: 15px; color: var(--text-faint); flex-shrink: 0; }
+  .ag-hint.ok { background: var(--emerald-soft); border-color: #bbf7d0; color: #166534; }
+  .ag-hint.ok svg { color: var(--success); }
+  .ag-hint.loading { background: #fef3c7; border-color: #fde68a; color: #92400e; }
+  .ag-hint.loading svg { color: var(--warning); }
+
+  .transfer { display: grid; grid-template-columns: 1fr 52px 1fr; gap: 14px; align-items: stretch; }
+  .tpane { border: 1px solid var(--border); border-radius: 5px; background: var(--card); display: flex; flex-direction: column; min-height: 320px; overflow: hidden; }
+  .tpane-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; background: #f9fafb; border-bottom: 1px solid var(--border);
+    font-size: 12px; font-weight: 700; color: var(--text-2);
+  }
+  .tpane-count { background: #9ca3af; color: #fff; font-size: 10.5px; font-weight: 700; padding: 1px 8px; border-radius: 9px; font-variant-numeric: tabular-nums; }
+  .tpane-count.on { background: var(--emerald); }
+  .tpane-search { position: relative; padding: 8px; border-bottom: 1px solid var(--border-soft); }
+  .tpane-search input { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 6px 10px 6px 30px; font-size: 12px; font-family: var(--sans); }
+  .tpane-search input:focus { outline: none; border-color: var(--emerald); box-shadow: 0 0 0 2px var(--emerald-soft); }
+  .tpane-search svg { position: absolute; left: 17px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: var(--text-faint); }
+  .tpane-list { flex: 1; overflow-y: auto; padding: 5px; max-height: 340px; }
+
+  .xfer-row {
+    display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 4px;
+    cursor: pointer; font-size: 12px; user-select: none; border: 1px solid transparent;
+  }
+  .xfer-row:hover { background: var(--row-hover); }
+  .xfer-row.sel { background: var(--emerald-soft); border-color: #bbf7d0; }
+  .xfer-row .who { line-height: 1.25; min-width: 0; }
+  .xfer-row .who .n { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .xfer-row .who .e { font-size: 10.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .xfer-row .snow-tag { margin-left: auto; font-size: 9px; font-weight: 700; color: var(--text-faint); letter-spacing: 0.03em; flex-shrink: 0; }
+  .xfer-empty { padding: 28px 14px; text-align: center; color: var(--text-faint); font-size: 11.5px; line-height: 1.5; }
+
+  .transfer-arrows { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+  .xfer-btn {
+    width: 38px; height: 34px; border-radius: 4px; border: none; cursor: pointer;
+    background: var(--emerald); color: #fff; display: grid; place-items: center;
+    transition: background 0.1s;
+  }
+  .xfer-btn:hover { background: var(--emerald-hover); }
+  .xfer-btn svg { width: 16px; height: 16px; }
+
+  /* ============ SHIFT ROLES MATRIX ============ */
+  .mini-table { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .add-link { padding: 8px 12px; color: var(--emerald); font-weight: 600; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border-top: 1px solid var(--border-soft); }
+  .add-link:hover { background: var(--emerald-soft); }
+  .inline-input { width: 60px; border: 1px solid transparent; border-radius: 3px; padding: 3px 6px; font-size: 12px; font-family: var(--sans); }
+  .inline-input:hover { border-color: var(--border); }
+  .inline-input:focus { outline: none; border-color: var(--emerald); }
+
+  /* ============ ROTA ============ */
+  .rota-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+
+  /* rota selectors row */
+  .rota-selectors {
+    display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
+    background: #f9fafb; border: 1px solid var(--border-soft); border-radius: 5px;
+    padding: 12px 14px; margin-bottom: 14px;
+  }
+  .rota-selectors .field { margin: 0; }
+  .rota-selectors .field label { margin-bottom: 4px; }
+  .rota-selectors select, .rota-selectors input { min-width: 150px; }
+  .rota-selectors input[type="date"] { min-width: 130px; }
+
+  /* Gantt matrix: roles = rows, dates = columns */
+  .gantt-scroll { overflow-x: auto; }
+  .gantt-table { border-collapse: collapse; width: 100%; font-size: 12px; min-width: 760px; }
+  .gantt-table th, .gantt-table td { border: 1px solid var(--border-soft); padding: 0; }
+  .gantt-table thead th {
+    background: #f9fafb; padding: 9px 10px; text-align: center; font-size: 11px;
+    font-weight: 700; color: var(--text-2); white-space: nowrap; text-transform: none;
+    letter-spacing: 0; border-bottom: 1px solid var(--border);
+  }
+  .gantt-table thead th.role-col {
+    text-align: left; position: sticky; left: 0; z-index: 5; min-width: 170px;
+    border-right: 1px solid var(--border);
+  }
+  .gantt-table thead th.today-col { background: var(--emerald-soft); color: #166534; }
+  .gantt-table thead th .dow { display: block; font-size: 9.5px; color: var(--text-faint); font-weight: 600; margin-top: 1px; }
+  .gantt-table thead th.today-col .dow { color: #15803d; }
+
+  .gantt-table td.role-name {
+    position: sticky; left: 0; z-index: 4; background: var(--card);
+    padding: 0 12px; font-weight: 600; white-space: nowrap;
+    border-right: 1px solid var(--border); height: 46px;
+  }
+  .gantt-table tr:nth-child(even) td.role-name { background: #fafafa; }
+  .role-name .role-wrap { display: flex; align-items: center; gap: 8px; }
+  .role-name .role-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .rd-first { background: #15803d; }
+  .rd-second { background: #1d4ed8; }
+  .rd-esc { background: #b45309; }
+
+  .gantt-cell { height: 46px; cursor: pointer; position: relative; padding: 4px !important; vertical-align: middle; text-align: center; }
+  .gantt-cell:hover { background: var(--emerald-soft); box-shadow: inset 0 0 0 1px var(--emerald); }
+  .gantt-cell.today-col { background: rgba(21,128,61,0.05); }
+  .gantt-cell.today-col:hover { background: var(--emerald-soft); }
+  .gantt-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px 4px 4px;
+    border-radius: 20px; background: var(--card); border: 1px solid var(--border);
+    font-size: 11.5px; font-weight: 600; max-width: 100%;
+  }
+  .gantt-chip .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gantt-chip.first { border-color: #bbf7d0; background: #f0fdf4; }
+  .gantt-chip.second { border-color: #bfdbfe; background: #eff6ff; }
+  .gantt-chip.esc { border-color: #fde68a; background: #fffbeb; }
+  .gantt-empty { color: var(--text-faint); font-size: 16px; line-height: 1; opacity: 0.4; }
+  .gantt-cell:hover .gantt-empty { opacity: 0.9; color: var(--emerald); }
+  .vtoggle { display: inline-flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .vtoggle button { padding: 6px 13px; border: none; background: var(--card); color: var(--text-3); font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--sans); display: inline-flex; align-items: center; gap: 6px; }
+  .vtoggle button + button { border-left: 1px solid var(--border); }
+  .vtoggle button.active { background: var(--emerald); color: #fff; }
+  .vtoggle button svg { width: 13px; height: 13px; }
+  .month-nav { display: flex; align-items: center; gap: 4px; }
+  .month-nav .m { padding: 0 10px; font-weight: 700; font-size: 13px; min-width: 110px; text-align: center; }
+  .rota-spacer { flex: 1; }
+
+  .rota-table td, .rota-table th { white-space: nowrap; }
+  .rota-table .date-c { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-2); }
+  .rota-table .day-c { color: var(--text-3); font-size: 11px; }
+  .rota-table tbody tr.weekend { background: #fafafa; }
+  .rota-table tbody tr.weekend:hover { background: var(--row-hover); }
+  .assign-cell { cursor: pointer; }
+  .assign-cell:hover { background: var(--emerald-soft); outline: 1px solid var(--emerald); outline-offset: -1px; }
+  .assign-empty { color: var(--text-faint); font-style: italic; font-size: 11px; }
+  .today-row { background: #ecfdf5 !important; }
+  .today-row td:first-child { box-shadow: inset 3px 0 0 var(--emerald); }
+
+  /* ============ MODAL ============ */
+  .overlay { position: fixed; inset: 0; background: rgba(17,24,39,0.55); display: none; align-items: flex-start; justify-content: center; z-index: 100; padding: 70px 20px; overflow-y: auto; }
+  .overlay.open { display: flex; }
+  .modal { background: var(--card); border-radius: 7px; width: 100%; max-width: 440px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: pop 0.14s ease; }
+  .modal.wide { max-width: 620px; }
+  @keyframes pop { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .modal-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-head h3 { font-size: 14px; font-weight: 700; }
+  .modal-head .x { width: 26px; height: 26px; border-radius: 4px; display: grid; place-items: center; cursor: pointer; color: var(--text-3); }
+  .modal-head .x:hover { background: #f3f4f6; color: var(--text); }
+  .modal-body { padding: 18px; }
+  .modal-foot { padding: 13px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+  .empty-hint { padding: 30px; text-align: center; color: var(--text-faint); font-size: 12.5px; }
+
+  @media (max-width: 860px) {
+    .frow.c2, .frow.c3, .frow.c4 { grid-template-columns: 1fr; }
+    .corp-logo .t2 { display: none; }
+    .transfer { grid-template-columns: 1fr; }
+    .transfer-arrows { flex-direction: row; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ CORPORATE HEADER ============ -->
+<div class="corp-header">
+  <div class="corp-logo">
+    <div class="sq">BP</div>
+    <div class="titles">
+      <div class="t1">BNP PARIBAS</div>
+      <div class="t2">CIB ITO PRODUCTION · GSS LIVEWIRE</div>
+    </div>
+  </div>
+  <div class="corp-right">
+    <span class="corp-env">PRODUCTION</span>
+    <div class="corp-divider"></div>
+    <div class="profile-wrap">
+      <div class="corp-user" onclick="toggleProfile(event)">
+        <span>Sathesh Anbanandham</span>
+        <div class="av">SA</div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="profile-menu" id="profile-menu">
+        <div class="pm-head">
+          <div class="av" style="width:34px;height:34px;font-size:12px;">SA</div>
+          <div><div class="pm-name">Sathesh Anbanandham</div><div class="pm-role">Platform Admin</div></div>
+        </div>
+        <div class="pm-item" onclick="goRota()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Team Rota
+        </div>
+        <div class="pm-item" onclick="goAdmin()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          Admin Panel
+        </div>
+        <div class="pm-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</div>
+        <div class="pm-sep"></div>
+        <div class="pm-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Sign Out</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PORTAL TABS (welcome mode) ============ -->
+<div class="topnav" id="portal-tabs">
+  <div class="topnav-item active" data-pnav="welcome" onclick="portalNav('welcome')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;margin-right:7px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+    Welcome
+  </div>
+</div>
+
+<!-- ============ ADMIN NAV (admin mode) ============ -->
+<div class="topnav" id="admin-tabs" style="display:none;">
+  <div class="topnav-item admin-back" onclick="goPortal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;margin-right:6px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Exit Admin
+  </div>
+  <div class="topnav-item active" data-nav="teams" onclick="nav('teams')">Teams</div>
+  <div class="topnav-item" data-nav="users" onclick="nav('users')">Users</div>
+  <div class="topnav-item" data-nav="applications" onclick="nav('applications')">Applications</div>
+</div>
+
+<!-- ============ BREADCRUMB ============ -->
+<div class="crumbbar" id="crumbbar" style="display:none;">
+  <span class="c" onclick="nav('teams')">Admin</span>
+  <span class="sep">/</span>
+  <span class="cur" id="crumb-cur">Teams</span>
+</div>
+
+<div class="content">
+
+  <!-- ====================================================== -->
+  <!-- PORTAL: WELCOME SCREEN (landing) -->
+  <!-- ====================================================== -->
+  <div class="page active" id="page-welcome">
+    <div class="welcome-hero">
+      <h1>Production Support Directory</h1>
+      <p>Search for an application or team to get its support contacts, or ask the assistant.</p>
+    </div>
+
+    <div class="welcome-split">
+      <!-- LEFT: search + results -->
+      <div class="welcome-search-col">
+        <div class="ws-searchbar">
+          <div class="search" style="max-width:none;flex:1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input id="ws-input" placeholder="Search application or team name…" oninput="wsSearch()" autocomplete="off">
+          </div>
+          <select class="select" id="ws-type" onchange="wsSearch()">
+            <option value="all">All</option>
+            <option value="app">Applications</option>
+            <option value="team">Teams</option>
+          </select>
+        </div>
+
+        <div class="grid-card">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:22%">Name</th>
+                  <th style="width:9%">Type</th>
+                  <th>Support Team</th>
+                  <th>Email DL</th>
+                  <th>Hotline</th>
+                  <th style="width:80px"></th>
+                </tr>
+              </thead>
+              <tbody id="ws-results"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="ws-result-hint" id="ws-hint">Showing all entries. Type to filter.</div>
+      </div>
+
+      <!-- RIGHT: chatbot -->
+      <div class="chatbot">
+        <div class="cb-head">
+          <div class="cb-bot-av">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 16h.01M16 16h.01"/></svg>
+          </div>
+          <div>
+            <div class="cb-title">Support Assistant</div>
+            <div class="cb-status"><span class="cb-dot"></span>Online · ask about any app or team</div>
+          </div>
+        </div>
+        <div class="cb-body" id="cb-body">
+          <div class="cb-msg bot">
+            <div class="cb-bubble">Hi Sathesh. Ask me for the support details of any application or team — e.g. <em>"APS Gateway"</em> or <em>"2S FX Support"</em>.</div>
+          </div>
+        </div>
+        <div class="cb-input">
+          <input id="cb-text" placeholder="Type an app or team name…" onkeydown="if(event.key==='Enter')cbSend()">
+          <button class="cb-send" onclick="cbSend()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+          </button>
+        </div>
+        <div class="cb-suggest">
+          <span class="cb-chip" onclick="cbAsk('APS Gateway')">APS Gateway</span>
+          <span class="cb-chip" onclick="cbAsk('2S FX Support')">2S FX Support</span>
+          <span class="cb-chip" onclick="cbAsk('Murex')">Murex</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <!-- PORTAL: TEAM ROTA (full-screen standalone) -->
+  <!-- ====================================================== -->
+  <div class="page" id="page-rota-standalone">
+    <div class="page-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="back" onclick="portalNav('welcome')" title="Back to Welcome" style="width:30px;height:30px;border:1px solid var(--border);border-radius:4px;display:grid;place-items:center;cursor:pointer;color:var(--text-2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </div>
+        <div>
+          <h1>Team Rota</h1>
+          <div class="meta">On-call schedule by role and date</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rota-selectors">
+      <div class="field">
+        <label>Team</label>
+        <select id="sa-team"><option>2S ADM Support</option><option>2S AMER APS</option><option>2S FX Support</option></select>
+      </div>
+      <div class="field">
+        <label>Shift</label>
+        <select id="sa-shift" onchange="renderSAGantt()">
+          <option>Weekday Rota · 09:00–18:00</option>
+          <option>APAC Night · 22:00–06:00</option>
+          <option>Weekend Cover · 08:00–20:00</option>
+        </select>
+      </div>
+      <div class="field"><label>From</label><input type="date" id="sa-from" value="2026-07-01" onchange="renderSAGantt()"></div>
+      <div class="field"><label>To</label><input type="date" id="sa-to" value="2026-07-08" onchange="renderSAGantt()"></div>
+      <button class="btn btn-sm" style="margin-bottom:1px;" onclick="renderSAGantt()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.7 1 6.4 2.6L21 8"/><path d="M21 3v5h-5"/></svg>Apply</button>
+    </div>
+
+    <div class="rota-toolbar">
+      <div class="vtoggle">
+        <button class="active" id="sav-gantt" onclick="setSAView('gantt')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h9"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>Gantt</button>
+        <button id="sav-table" onclick="setSAView('table')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>Table</button>
+      </div>
+      <div class="rota-spacer"></div>
+      <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Export Excel</button>
+    </div>
+
+    <div id="sa-gantt-view">
+      <div class="grid-card">
+        <div class="gantt-scroll"><table class="gantt-table" id="sa-gantt-table"></table></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-faint);margin-top:7px;">Click any cell to assign a team member to that role on that date.</div>
+    </div>
+
+    <div id="sa-table-view" style="display:none;">
+      <div class="grid-card">
+        <div class="tbl-wrap">
+          <table class="rota-table">
+            <thead><tr><th style="width:90px">Date</th><th style="width:54px">Day</th><th>First Line</th><th>Second Line</th><th>Escalation Manager</th></tr></thead>
+            <tbody id="sa-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <!-- SCREEN 1: TEAMS MASTER -->
+  <!-- ====================================================== -->
+  <div class="page" id="page-teams">
+    <div class="page-head">
+      <div>
+        <h1>Teams</h1>
+        <div class="meta">Centralized administration for follow-the-sun production support teams</div>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>Export</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('m-team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>New Team</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input placeholder="Search team name / assignment group name…">
+      </div>
+      <select class="select"><option>All métiers</option><option>2S Global Support</option><option>FX &amp; Rates</option><option>Cash Equities</option></select>
+      <select class="select"><option>All statuses</option><option>Active</option><option>Inactive</option></select>
+    </div>
+
+    <div class="grid-card">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:28%">Team Name</th>
+              <th>Assignment Group</th>
+              <th>Métier</th>
+              <th>Members</th>
+              <th>Status</th>
+              <th style="width:90px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="teams-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <!-- SCREEN 2: TEAM WORKSPACE -->
+  <!-- ====================================================== -->
+  <div class="page" id="page-workspace">
+    <div class="team-ctx">
+      <div class="back" onclick="nav('teams')" title="Back to Teams">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </div>
+      <div>
+        <div class="tname" id="ws-team-name">2S ADM Support</div>
+        <div class="tsub">Assignment Group: <strong id="ws-team-ag">ADM_SUPPORT</strong> · Métier: 2S Global Support</div>
+      </div>
+      <div class="ctx-right">
+        <div class="toggle-lbl">
+          <span>Active</span>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <button class="btn btn-primary btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>Save</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="contact" onclick="setTab('contact')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Contact Details
+      </div>
+      <div class="tab" data-tab="members" onclick="setTab('members')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Team Members <span class="pill">12</span>
+      </div>
+      <div class="tab" data-tab="apps" onclick="setTab('apps')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        Mapped Applications <span class="pill">8</span>
+      </div>
+      <div class="tab" data-tab="shifts" onclick="setTab('shifts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Shift Definition <span class="pill">4</span>
+      </div>
+      <div class="tab" data-tab="rota" onclick="setTab('rota')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Rota Schedule
+      </div>
+    </div>
+
+    <div class="tab-body">
+
+      <!-- TAB 1: CONTACT DETAILS -->
+      <div class="tabpane active" id="pane-contact">
+        <div class="form-section-title">Operational Contact Information</div>
+        <div class="frow">
+          <div class="field">
+            <label>Team Description</label>
+            <textarea placeholder="What this team supports…">Application Development &amp; Maintenance support for core banking platforms across APAC. Provides L1/L2 production cover under follow-the-sun model.</textarea>
+          </div>
+        </div>
+        <div class="frow c2">
+          <div class="field"><label>Email Distribution List</label><input value="adm.support@bnpparibas.com"></div>
+          <div class="field"><label>Hotline Number</label><input value="+65 6210 1234"></div>
+        </div>
+        <div class="frow c2">
+          <div class="field"><label>Team Manager</label><input value="Sathesh Anbanandham"></div>
+          <div class="field"><label>Special Instructions</label><input placeholder="e.g. escalate P1 to global bridge within 15 min"></div>
+        </div>
+        <div class="form-foot">
+          <button class="btn btn-sm">Cancel</button>
+          <button class="btn btn-primary btn-sm">Save Contact Details</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: TEAM MEMBERS (ServiceNow assignment-group sourced) -->
+      <div class="tabpane" id="pane-members">
+
+        <!-- Fetch bar: enter SNOW assignment group, pull members -->
+        <div class="ag-fetchbar">
+          <div class="field" style="flex:1;min-width:240px;">
+            <label>ServiceNow Assignment Group <span class="req">*</span></label>
+            <div style="display:flex;gap:8px;">
+              <div class="search" style="flex:1;max-width:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input id="ag-input" placeholder="Search by assignment group name… e.g. ADM_SUPPORT" value="ADM_SUPPORT">
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="fetchSnow()" id="ag-fetch-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.7 1 6.4 2.6L21 8"/><path d="M21 3v5h-5"/></svg>
+                Fetch from ServiceNow
+              </button>
+            </div>
+          </div>
+          <div class="field" style="width:220px;">
+            <label>Métier</label>
+            <select><option>2S Global Support</option><option>FX &amp; Rates</option><option>Cash Equities</option></select>
+          </div>
+        </div>
+        <div class="ag-hint" id="ag-status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Enter an assignment group and fetch to pull its current members from ServiceNow, then transfer them into the team.
+        </div>
+
+        <!-- Dual-pane transfer -->
+        <div class="transfer">
+          <!-- LEFT: assignment group members from SNOW -->
+          <div class="tpane">
+            <div class="tpane-head">
+              <span>Assignment Group Members</span>
+              <span class="tpane-count" id="left-count">0</span>
+            </div>
+            <div class="tpane-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input id="left-search" placeholder="Search by member name…" oninput="renderPanes()">
+            </div>
+            <div class="tpane-list" id="left-list"></div>
+          </div>
+
+          <!-- CENTER: transfer arrows -->
+          <div class="transfer-arrows">
+            <button class="xfer-btn" title="Add selected to team" onclick="moveSelected('toRight')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <button class="xfer-btn" title="Add all to team" onclick="moveAll('toRight')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 18l6-6-6-6M5 18l6-6-6-6"/></svg>
+            </button>
+            <button class="xfer-btn" title="Remove selected from team" onclick="moveSelected('toLeft')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="xfer-btn" title="Remove all from team" onclick="moveAll('toLeft')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 18l-6-6 6-6M19 18l-6-6 6-6"/></svg>
+            </button>
+          </div>
+
+          <!-- RIGHT: team members -->
+          <div class="tpane">
+            <div class="tpane-head">
+              <span>Team Members</span>
+              <span class="tpane-count on" id="right-count">0</span>
+            </div>
+            <div class="tpane-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input id="right-search" placeholder="Search team member name…" oninput="renderPanes()">
+            </div>
+            <div class="tpane-list" id="right-list"></div>
+          </div>
+        </div>
+
+        <div class="form-foot">
+          <span style="margin-right:auto;font-size:11px;color:var(--text-faint);align-self:center;">Eligible roles are assigned per member after they are added to the team.</span>
+          <button class="btn btn-sm">Cancel</button>
+          <button class="btn btn-primary btn-sm">Save Team Members</button>
+        </div>
+      </div>
+
+      <!-- TAB 3: MAPPED APPLICATIONS -->
+      <div class="tabpane" id="pane-apps">
+        <div class="sub-toolbar">
+          <h3>Mapped Applications</h3>
+          <button class="btn btn-primary btn-sm" onclick="openModal('m-mapapp')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Map Application</button>
+        </div>
+        <div class="grid-card">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:26%">Application</th>
+                  <th>Service Owner</th>
+                  <th>Environment</th>
+                  <th>Criticality</th>
+                  <th>Status</th>
+                  <th style="width:90px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mapapps-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: SHIFT DEFINITION -->
+      <div class="tabpane" id="pane-shifts">
+        <div class="sub-toolbar">
+          <h3>Shift Templates</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Shift</button>
+            <button class="btn btn-primary btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Add Shift</button>
+          </div>
+        </div>
+
+        <!-- template selector grid -->
+        <div class="grid-card" style="margin-bottom:16px;">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Shift Name</th><th>Timezone</th><th>Start</th><th>End</th><th>Cross Midnight</th><th style="width:70px"></th></tr>
+              </thead>
+              <tbody id="shifttpl-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- editing selected shift -->
+        <div class="form-section-title">Edit Shift · <span style="color:var(--emerald)">Weekday Rota</span></div>
+        <div class="frow c4">
+          <div class="field"><label>Shift Name <span class="req">*</span></label><input value="Weekday Rota"></div>
+          <div class="field"><label>Timezone <span class="req">*</span></label><select><option>Asia/Singapore</option><option>Europe/London</option><option>America/New_York</option></select></div>
+          <div class="field"><label>Start Time <span class="req">*</span></label><input type="time" value="09:00"></div>
+          <div class="field"><label>End Time <span class="req">*</span></label><input type="time" value="18:00"></div>
+        </div>
+
+        <div class="form-section-title" style="margin-top:6px;">Roles Matrix</div>
+        <div class="mini-table">
+          <table>
+            <thead>
+              <tr><th style="width:45%">Role</th><th>Mandatory</th><th style="width:140px">Display Order</th><th style="width:70px">Action</th></tr>
+            </thead>
+            <tbody id="rolematrix-body"></tbody>
+          </table>
+          <div class="add-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;"><path d="M12 5v14M5 12h14"/></svg>Add Role</div>
+        </div>
+
+        <div class="form-foot">
+          <button class="btn btn-sm" style="color:var(--error);border-color:#fecaca;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Delete Shift</button>
+          <button class="btn btn-primary btn-sm">Save Shift</button>
+        </div>
+      </div>
+
+      <!-- TAB 5: ROTA SCHEDULE -->
+      <div class="tabpane" id="pane-rota">
+
+        <!-- Selectors: team, shift, time range -->
+        <div class="rota-selectors">
+          <div class="field">
+            <label>Team</label>
+            <select id="rota-team"><option>2S ADM Support</option><option>2S AMER APS</option><option>2S FX Support</option></select>
+          </div>
+          <div class="field">
+            <label>Shift</label>
+            <select id="rota-shift" onchange="renderGantt()">
+              <option>Weekday Rota · 09:00–18:00</option>
+              <option>APAC Night · 22:00–06:00</option>
+              <option>Weekend Cover · 08:00–20:00</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>From</label>
+            <input type="date" id="rota-from" value="2026-07-01" onchange="renderGantt()">
+          </div>
+          <div class="field">
+            <label>To</label>
+            <input type="date" id="rota-to" value="2026-07-08" onchange="renderGantt()">
+          </div>
+          <button class="btn btn-sm" style="margin-bottom:1px;" onclick="renderGantt()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.7 1 6.4 2.6L21 8"/><path d="M21 3v5h-5"/></svg>Apply
+          </button>
+        </div>
+
+        <!-- Toolbar: view toggle (Gantt default) + actions -->
+        <div class="rota-toolbar">
+          <div class="vtoggle">
+            <button class="active" id="rv-gantt" onclick="setRotaView('gantt')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h9"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>Gantt</button>
+            <button id="rv-table" onclick="setRotaView('table')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>Table</button>
+          </div>
+          <div class="rota-spacer"></div>
+          <button class="btn btn-primary btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M7 12h10"/></svg>Generate Rota</button>
+          <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Previous Period</button>
+          <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>Export Excel</button>
+        </div>
+
+        <!-- GANTT VIEW (default): roles = rows, dates = columns -->
+        <div id="rota-gantt-view">
+          <div class="grid-card">
+            <div class="gantt-scroll">
+              <table class="gantt-table" id="gantt-table"></table>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:7px;">Click any cell to assign a team member to that role on that date.</div>
+        </div>
+
+        <!-- TABLE VIEW (secondary): dates = rows -->
+        <div id="rota-table-view" style="display:none;">
+          <div class="grid-card">
+            <div class="tbl-wrap">
+              <table class="rota-table">
+                <thead>
+                  <tr>
+                    <th style="width:90px">Date</th>
+                    <th style="width:54px">Day</th>
+                    <th>First Line</th>
+                    <th>Second Line</th>
+                    <th>Escalation Manager</th>
+                    <th style="width:60px">Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="rota-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:7px;">Double-click any assignment cell to reassign the engineer for that role and date.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <!-- USERS (global directory) -->
+  <!-- ====================================================== -->
+  <div class="page" id="page-users">
+    <div class="page-head">
+      <div><h1>Users</h1><div class="meta">Global engineer directory across all teams</div></div>
+      <div class="head-actions">
+        <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.7 1 6.4 2.6L21 8"/><path d="M21 3v5h-5"/></svg>Sync AD</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('m-member')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>New User</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input placeholder="Search by name, email or UID…">
+      </div>
+      <select class="select"><option>All teams</option><option>2S ADM Support</option><option>2S AMER APS</option></select>
+    </div>
+    <div class="grid-card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Teams</th><th>Eligible Roles</th><th style="width:90px">Actions</th></tr></thead>
+          <tbody id="users-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================== -->
+  <!-- APPLICATIONS (global) -->
+  <!-- ====================================================== -->
+  <div class="page" id="page-applications">
+    <div class="page-head">
+      <div><h1>Applications</h1><div class="meta">Application catalog and team ownership</div></div>
+      <div class="head-actions">
+        <button class="btn btn-primary btn-sm" onclick="openModal('m-app')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>New Application</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input placeholder="Search application name…">
+      </div>
+      <select class="select"><option>All environments</option><option>PROD</option><option>UAT</option><option>DEV</option></select>
+      <select class="select"><option>All criticalities</option><option>High</option><option>Medium</option><option>Low</option></select>
+    </div>
+    <div class="grid-card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:24%">Application</th><th>Service Owner</th><th>Support Teams</th><th>Environment</th><th>Criticality</th><th>Status</th><th style="width:90px">Actions</th></tr></thead>
+          <tbody id="globalapps-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ MODALS ============ -->
+<!-- New Team -->
+<div class="overlay" id="m-team">
+  <div class="modal">
+    <div class="modal-head"><h3>New Team</h3><div class="x" onclick="closeModal('m-team')">✕</div></div>
+    <div class="modal-body">
+      <div class="frow"><div class="field"><label>Team Name <span class="req">*</span></label><input placeholder="e.g. 2S EMEA APS"></div></div>
+      <div class="frow c2">
+        <div class="field"><label>Assignment Group <span class="req">*</span></label><input placeholder="EMEA_APS"></div>
+        <div class="field"><label>Métier</label><select><option>2S Global Support</option><option>FX &amp; Rates</option><option>Cash Equities</option></select></div>
+      </div>
+      <div class="frow c2">
+        <div class="field"><label>Email DL</label><input placeholder="team@bnpparibas.com"></div>
+        <div class="field"><label>Hotline</label><input placeholder="+44 …"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-sm" onclick="closeModal('m-team')">Cancel</button><button class="btn btn-primary btn-sm" onclick="closeModal('m-team')">Create &amp; Open</button></div>
+  </div>
+</div>
+
+<!-- Add Member -->
+<div class="overlay" id="m-member">
+  <div class="modal">
+    <div class="modal-head"><h3>Add Team Member</h3><div class="x" onclick="closeModal('m-member')">✕</div></div>
+    <div class="modal-body">
+      <div class="frow c2">
+        <div class="field"><label>Employee Name <span class="req">*</span></label><input placeholder="Full name"></div>
+        <div class="field"><label>Email Address <span class="req">*</span></label><input placeholder="name@bnpparibas.com"></div>
+      </div>
+      <div class="frow c2">
+        <div class="field"><label>Designation</label><input placeholder="e.g. Production Support Analyst"></div>
+        <div class="field"><label>Mobile Number</label><input placeholder="+65 …"></div>
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label>Eligible Roles</label>
+        <div class="checks">
+          <label class="check"><input type="checkbox" checked> First Line</label>
+          <label class="check"><input type="checkbox"> Second Line</label>
+          <label class="check"><input type="checkbox"> Escalation Manager</label>
+        </div>
+      </div>
+      <div class="field" style="display:flex;align-items:center;gap:10px;">
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        <span style="font-size:12.5px;font-weight:600;">Active</span>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-sm" onclick="closeModal('m-member')">Cancel</button><button class="btn btn-primary btn-sm" onclick="closeModal('m-member')">Save</button></div>
+  </div>
+</div>
+
+<!-- Map Application -->
+<div class="overlay" id="m-mapapp">
+  <div class="modal">
+    <div class="modal-head"><h3>Map Application</h3><div class="x" onclick="closeModal('m-mapapp')">✕</div></div>
+    <div class="modal-body">
+      <div class="frow"><div class="field"><label>Application <span class="req">*</span></label><select><option>APS Gateway</option><option>FX Connect</option><option>Livewire</option><option>Murex</option></select></div></div>
+      <div class="frow c2">
+        <div class="field"><label>Environment</label><select><option>PROD</option><option>UAT</option><option>DEV</option></select></div>
+        <div class="field"><label>Criticality</label><select><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-sm" onclick="closeModal('m-mapapp')">Cancel</button><button class="btn btn-primary btn-sm" onclick="closeModal('m-mapapp')">Map</button></div>
+  </div>
+</div>
+
+<!-- New Application (global) -->
+<div class="overlay" id="m-app">
+  <div class="modal">
+    <div class="modal-head"><h3>New Application</h3><div class="x" onclick="closeModal('m-app')">✕</div></div>
+    <div class="modal-body">
+      <div class="frow c2">
+        <div class="field"><label>Application Name <span class="req">*</span></label><input placeholder="e.g. APS Gateway"></div>
+        <div class="field"><label>Service Owner</label><input placeholder="e.g. Core Banking"></div>
+      </div>
+      <div class="frow c2">
+        <div class="field"><label>Environment</label><select><option>PROD</option><option>UAT</option><option>DEV</option></select></div>
+        <div class="field"><label>Criticality</label><select><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-sm" onclick="closeModal('m-app')">Cancel</button><button class="btn btn-primary btn-sm" onclick="closeModal('m-app')">Create</button></div>
+  </div>
+</div>
+
+<!-- Reassign popup (rota double-click) -->
+<div class="overlay" id="m-reassign">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-head"><h3>Assign Engineer</h3><div class="x" onclick="closeModal('m-reassign')">✕</div></div>
+    <div class="modal-body">
+      <div class="frow c2">
+        <div class="field"><label>Date</label><input id="ra-date" value="" disabled></div>
+        <div class="field"><label>Role</label><input id="ra-role-label" value="" disabled></div>
+      </div>
+      <div class="frow"><div class="field"><label>Select Engineer</label><select id="ra-engineer"></select><div class="hint">Only members of the selected team are listed.</div></div></div>
+      <div class="frow"><div class="field"><label>Notes</label><input placeholder="Optional handover note"></div></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-sm" onclick="closeModal('m-reassign')">Cancel</button><button class="btn btn-primary btn-sm" onclick="saveAssign()">Save</button></div>
+  </div>
+</div>
+
+<script>
+  // ---------- avatar helper ----------
+  function initials(name){ return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+  function avClass(name){ let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))>>>0; return 'av'+(h%7); }
+  function uava(name){ return `<span class="uava ${avClass(name)}">${initials(name)}</span>`; }
+
+  // ---------- PORTAL / ADMIN MODE ----------
+  function showOnlyPage(id){
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function goPortal(){
+    document.getElementById('portal-tabs').style.display='flex';
+    document.getElementById('admin-tabs').style.display='none';
+    document.getElementById('crumbbar').style.display='none';
+    portalNav('welcome');
+  }
+  function goAdmin(){
+    closeProfile();
+    document.getElementById('portal-tabs').style.display='none';
+    document.getElementById('admin-tabs').style.display='flex';
+    document.getElementById('crumbbar').style.display='flex';
+    nav('teams');
+  }
+  function portalNav(p){
+    document.querySelectorAll('#portal-tabs .topnav-item').forEach(x=>x.classList.toggle('active', x.dataset.pnav===p));
+    if(p==='welcome') showOnlyPage('page-welcome');
+  }
+  function goRota(){
+    closeProfile();
+    document.getElementById('portal-tabs').style.display='flex';
+    document.getElementById('admin-tabs').style.display='none';
+    document.getElementById('crumbbar').style.display='none';
+    document.querySelectorAll('#portal-tabs .topnav-item').forEach(x=>x.classList.remove('active'));
+    showOnlyPage('page-rota-standalone');
+    renderSAGantt();
+  }
+
+  // ---------- PROFILE DROPDOWN ----------
+  function toggleProfile(e){ e.stopPropagation(); document.querySelector('.profile-wrap').classList.toggle('open'); }
+  function closeProfile(){ document.querySelector('.profile-wrap').classList.remove('open'); }
+  document.addEventListener('click', e=>{ if(!e.target.closest('.profile-wrap')) closeProfile(); });
+
+  // ---------- NAV (admin) ----------
+  function nav(p){
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    document.getElementById('page-'+p).classList.add('active');
+    document.querySelectorAll('#admin-tabs .topnav-item').forEach(x=>x.classList.remove('active'));
+    const navItem = document.querySelector('#admin-tabs .topnav-item[data-nav="'+p+'"]');
+    if(navItem) navItem.classList.add('active');
+    const labels={teams:'Teams',users:'Users',applications:'Applications',workspace:'Team Workspace'};
+    const cb=document.getElementById('crumbbar');
+    if(p==='workspace'){
+      cb.innerHTML=`<span class="c" onclick="nav('teams')">Admin</span><span class="sep">/</span><span class="c" onclick="nav('teams')">Teams</span><span class="sep">/</span><span class="cur">${document.getElementById('ws-team-name').textContent}</span>`;
+    } else {
+      cb.innerHTML=`<span class="c" onclick="nav('teams')">Admin</span><span class="sep">/</span><span class="cur">${labels[p]}</span>`;
+      const t=document.querySelector('#admin-tabs .topnav-item[data-nav="teams"]');
+      if(t) t.classList.toggle('active', p==='teams');
+    }
+    window.scrollTo(0,0);
+  }
+  function openWorkspace(name, ag){
+    document.getElementById('ws-team-name').textContent=name;
+    document.getElementById('ws-team-ag').textContent=ag;
+    nav('workspace');
+    setTab('contact');
+  }
+
+  // ---------- TABS ----------
+  function setTab(t){
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.tab===t));
+    document.querySelectorAll('.tabpane').forEach(x=>x.classList.remove('active'));
+    document.getElementById('pane-'+t).classList.add('active');
+  }
+
+  // ---------- MODALS ----------
+  function openModal(id){ document.getElementById(id).classList.add('open'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o)o.classList.remove('open'); }));
+
+  // ---------- TEAMS DATA ----------
+  const teams=[
+    ['2S ADM Support','ADM_SUPPORT','2S Global Support',12,true],
+    ['2S AMER APS','AMER_APS','2S Global Support',28,true],
+    ['2S APAC Core','APAC_CORE','2S Global Support',19,true],
+    ['2S FX Support','FX_SUPPORT','FX & Rates',15,true],
+    ['2S EMEA Cash','EMEA_CASH','Cash Equities',22,true],
+    ['2S Rates Pricing','RATES_PRC','FX & Rates',9,false],
+    ['2S Murex Ops','MUREX_OPS','2S Global Support',17,true],
+  ];
+  const tb=document.getElementById('teams-body');
+  teams.forEach(([name,ag,met,members,active])=>{
+    tb.innerHTML+=`<tr class="clickable" onclick="openWorkspace('${name}','${ag}')">
+      <td><span style="font-weight:600;">${name}</span></td>
+      <td><span class="badge b-gray" style="font-family:monospace;">${ag}</span></td>
+      <td>${met}</td>
+      <td><span class="badge b-num">${members}</span></td>
+      <td><span class="dot-active"><span class="dot ${active?'on':'off'}"></span>${active?'Active':'Inactive'}</span></td>
+      <td onclick="event.stopPropagation()"><div class="row-actions">
+        <div class="iconbtn" onclick="openWorkspace('${name}','${ag}')" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></div>
+        <div class="iconbtn danger" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>
+      </div></td>
+    </tr>`;
+  });
+
+  function roleBadges(roles){ return roles.map(r=>`<span class="badge ${r==='Escalation'?'b-amber':r==='Second Line'?'b-blue':'b-green'}">${r}</span>`).join(' '); }
+
+  // ---------- TEAM MEMBERS: ServiceNow assignment-group transfer ----------
+  // Simulated ServiceNow member directory keyed by assignment group.
+  const snowDirectory = {
+    'ADM_SUPPORT': [
+      ['Aaron Teoh','aaron.teoh@bnpparibas.com'],
+      ['Karan Mehta','karan.mehta@bnpparibas.com'],
+      ['Pranay Kapoor','pranay.kapoor@bnpparibas.com'],
+      ['Ravi Sharma','ravi.sharma@bnpparibas.com'],
+      ['Vikram Patel','vikram.patel@bnpparibas.com'],
+      ['Mei Lin','mei.lin@bnpparibas.com'],
+      ['Daniel Foo','daniel.foo@bnpparibas.com'],
+      ['Anita Desai','anita.desai@bnpparibas.com'],
+    ],
+    'AMER_APS': [
+      ['Tom Becker','tom.becker@bnpparibas.com'],
+      ['Sara Okafor','sara.okafor@bnpparibas.com'],
+      ['Diego Martín','diego.martin@bnpparibas.com'],
+    ],
+    'FX_SUPPORT': [
+      ['Keiko Tanaka','keiko.tanaka@bnpparibas.com'],
+      ['Marcus Webb','marcus.webb@bnpparibas.com'],
+    ],
+  };
+
+  // state: left = fetched-but-not-on-team, right = on the team
+  let leftMembers = [];   // [{name,email,sel}]
+  let rightMembers = [];  // [{name,email,sel}]
+  let snowFetched = false;
+
+  function fetchSnow(){
+    const ag = (document.getElementById('ag-input').value || '').trim().toUpperCase();
+    const status = document.getElementById('ag-status');
+    const btn = document.getElementById('ag-fetch-btn');
+    if(!ag){ return; }
+    // loading state
+    status.className = 'ag-hint loading';
+    status.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9"/></svg> Fetching members from ServiceNow for <strong>&nbsp;${ag}&nbsp;</strong>…`;
+    btn.disabled = true;
+    setTimeout(()=>{
+      const found = snowDirectory[ag] || [];
+      const onTeamEmails = new Set(rightMembers.map(m=>m.email));
+      // Anyone already on the team stays on the right; the rest go to the left pool.
+      leftMembers = found
+        .filter(([n,e]) => !onTeamEmails.has(e))
+        .map(([n,e]) => ({name:n,email:e,sel:false}));
+      snowFetched = true;
+      btn.disabled = false;
+      if(found.length){
+        status.className = 'ag-hint ok';
+        status.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Pulled <strong>&nbsp;${found.length}&nbsp;</strong> member(s) from ServiceNow group <strong>&nbsp;${ag}&nbsp;</strong>. Select people and use the arrows to add them to the team.`;
+      } else {
+        status.className = 'ag-hint';
+        status.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> No members found in ServiceNow for <strong>&nbsp;${ag}&nbsp;</strong>. Check the assignment group name and try again.`;
+      }
+      renderPanes();
+    }, 650);
+  }
+
+  function paneRow(m, side){
+    return `<div class="xfer-row ${m.sel?'sel':''}" onclick="toggleSel('${side}','${m.email}')">
+      ${uava(m.name)}
+      <div class="who"><div class="n">${m.name}</div><div class="e">${m.email}</div></div>
+      ${side==='left'?'<span class="snow-tag">SNOW</span>':''}
+    </div>`;
+  }
+
+  function renderPanes(){
+    const lq = (document.getElementById('left-search').value||'').toLowerCase();
+    const rq = (document.getElementById('right-search').value||'').toLowerCase();
+    const ll = document.getElementById('left-list');
+    const rl = document.getElementById('right-list');
+
+    const lf = leftMembers.filter(m=>m.name.toLowerCase().includes(lq)||m.email.toLowerCase().includes(lq));
+    const rf = rightMembers.filter(m=>m.name.toLowerCase().includes(rq)||m.email.toLowerCase().includes(rq));
+
+    ll.innerHTML = lf.length ? lf.map(m=>paneRow(m,'left')).join('')
+      : (snowFetched ? '<div class="xfer-empty">All fetched members are already on the team.</div>'
+                     : '<div class="xfer-empty">No members loaded yet.<br>Fetch an assignment group above.</div>');
+    rl.innerHTML = rf.length ? rf.map(m=>paneRow(m,'right')).join('')
+      : '<div class="xfer-empty">No team members yet.<br>Transfer people from the left.</div>';
+
+    document.getElementById('left-count').textContent = leftMembers.length;
+    document.getElementById('right-count').textContent = rightMembers.length;
+  }
+
+  function toggleSel(side,email){
+    const arr = side==='left'?leftMembers:rightMembers;
+    const m = arr.find(x=>x.email===email);
+    if(m){ m.sel=!m.sel; renderPanes(); }
+  }
+  function moveSelected(dir){
+    if(dir==='toRight'){
+      const moving = leftMembers.filter(m=>m.sel).map(m=>({...m,sel:false}));
+      rightMembers = rightMembers.concat(moving);
+      leftMembers = leftMembers.filter(m=>!m.sel);
+    } else {
+      const moving = rightMembers.filter(m=>m.sel).map(m=>({...m,sel:false}));
+      leftMembers = leftMembers.concat(moving);
+      rightMembers = rightMembers.filter(m=>!m.sel);
+    }
+    renderPanes();
+  }
+  function moveAll(dir){
+    if(dir==='toRight'){
+      rightMembers = rightMembers.concat(leftMembers.map(m=>({...m,sel:false})));
+      leftMembers = [];
+    } else {
+      leftMembers = leftMembers.concat(rightMembers.map(m=>({...m,sel:false})));
+      rightMembers = [];
+    }
+    renderPanes();
+  }
+
+  // seed: this team already has a few members on the right
+  rightMembers = [
+    {name:'Aaron Teoh',email:'aaron.teoh@bnpparibas.com',sel:false},
+    {name:'Karan Mehta',email:'karan.mehta@bnpparibas.com',sel:false},
+    {name:'Pranay Kapoor',email:'pranay.kapoor@bnpparibas.com',sel:false},
+  ];
+  renderPanes();
+
+  // ---------- MAPPED APPS ----------
+  const mapapps=[
+    ['APS Gateway','Core Banking','PROD','High',true],
+    ['FX Connect','FX Team','PROD','High',true],
+    ['Livewire','GSS','PROD','Medium',true],
+    ['Murex','Rates','PROD','High',true],
+    ['SettleHub','Operations','UAT','Low',false],
+  ];
+  function critBadge(c){ return `<span class="badge ${c==='High'?'b-red':c==='Medium'?'b-amber':'b-gray'}">${c}</span>`; }
+  function envBadge(e){ return `<span class="badge ${e==='PROD'?'b-green':'b-gray'}">${e}</span>`; }
+  const mapb=document.getElementById('mapapps-body');
+  mapapps.forEach(([app,owner,env,crit,active])=>{
+    mapb.innerHTML+=`<tr>
+      <td><span style="font-weight:600;">${app}</span></td>
+      <td>${owner}</td><td>${envBadge(env)}</td><td>${critBadge(crit)}</td>
+      <td><span class="dot-active"><span class="dot ${active?'on':'off'}"></span>${active?'Active':'Inactive'}</span></td>
+      <td><div class="row-actions">
+        <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></div>
+        <div class="iconbtn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>
+      </div></td>
+    </tr>`;
+  });
+
+  // ---------- SHIFT TEMPLATES ----------
+  const shifttpls=[
+    ['Weekday Rota','Asia/Singapore','09:00','18:00',false,true],
+    ['APAC Night','Asia/Singapore','22:00','06:00',true,false],
+    ['Weekend Cover','Asia/Singapore','08:00','20:00',false,false],
+    ['EMEA Handover','Europe/London','14:00','22:00',false,false],
+  ];
+  const stb=document.getElementById('shifttpl-body');
+  shifttpls.forEach(([name,tz,st,et,xm,sel])=>{
+    stb.innerHTML+=`<tr class="clickable" ${sel?'style="background:var(--emerald-soft)"':''}>
+      <td><span style="font-weight:600;${sel?'color:var(--emerald)':''}">${name}</span></td>
+      <td>${tz}</td>
+      <td style="font-variant-numeric:tabular-nums;">${st}</td>
+      <td style="font-variant-numeric:tabular-nums;">${et}</td>
+      <td>${xm?'<span class="badge b-amber">Yes</span>':'<span class="badge b-gray">No</span>'}</td>
+      <td><div class="iconbtn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div></td>
+    </tr>`;
+  });
+
+  // ---------- ROLES MATRIX ----------
+  const roles=[['First Line',true,1],['Second Line',true,2],['Escalation Manager',false,3]];
+  const rmb=document.getElementById('rolematrix-body');
+  roles.forEach(([r,mand,ord])=>{
+    rmb.innerHTML+=`<tr>
+      <td><select class="select" style="border:1px solid transparent;padding:4px 26px 4px 6px;"><option ${r==='First Line'?'selected':''}>First Line</option><option ${r==='Second Line'?'selected':''}>Second Line</option><option ${r==='Escalation Manager'?'selected':''}>Escalation Manager</option></select></td>
+      <td><div class="toggle ${mand?'on':''}" onclick="this.classList.toggle('on')"></div></td>
+      <td><input class="inline-input" value="${ord}" style="font-variant-numeric:tabular-nums;"></td>
+      <td><div class="iconbtn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></div></td>
+    </tr>`;
+  });
+
+  // ---------- ROTA MODEL ----------
+  // Roles as rows; assignments keyed by 'role|dateKey'.
+  const rotaRoles = [
+    { key:'first',  label:'First Line',          dot:'rd-first',  chip:'first', abbr:'1L' },
+    { key:'second', label:'Second Line',         dot:'rd-second', chip:'second',abbr:'2L' },
+    { key:'esc',    label:'Escalation Manager',  dot:'rd-esc',    chip:'esc',   abbr:'ESC' },
+  ];
+  // assignments[dateKey][roleKey] = memberName
+  const assignments = {
+    '2026-07-01': {first:'Aaron Teoh',  second:'Karan Mehta', esc:'Pranay Kapoor'},
+    '2026-07-02': {first:'Aaron Teoh',  second:'Karan Mehta', esc:'Pranay Kapoor'},
+    '2026-07-03': {first:'Aaron Teoh',  second:'Karan Mehta', esc:'Pranay Kapoor'},
+    '2026-07-04': {first:'Aaron Teoh',  second:'Karan Mehta', esc:'Pranay Kapoor'},
+    '2026-07-05': {first:'Aaron Teoh',  second:'Karan Mehta', esc:'Pranay Kapoor'},
+    '2026-07-06': {first:'Ravi Sharma', second:'Aaron Teoh',  esc:'Pranay Kapoor'},
+    '2026-07-07': {first:'Ravi Sharma', second:'Aaron Teoh',  esc:'Pranay Kapoor'},
+    '2026-07-08': {first:'Ravi Sharma', second:'Aaron Teoh',  esc:'Pranay Kapoor'},
+  };
+  const teamRoster = ['Aaron Teoh','Karan Mehta','Pranay Kapoor','Ravi Sharma','Vikram Patel','Mei Lin'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const todayKey = '2026-07-04';
+
+  function dateRange(fromStr,toStr){
+    const out=[]; const from=new Date(fromStr+'T00:00'); const to=new Date(toStr+'T00:00');
+    if(isNaN(from)||isNaN(to)||to<from) return out;
+    let d=new Date(from); let guard=0;
+    while(d<=to && guard<120){
+      const key=d.toISOString().slice(0,10);
+      out.push({ key, day:d.getDate(), mon:MONTHS[d.getMonth()], dow:DOWS[d.getDay()], weekend:(d.getDay()===0||d.getDay()===6) });
+      d.setDate(d.getDate()+1); guard++;
+    }
+    return out;
+  }
+  function fmtLong(key){ const d=new Date(key+'T00:00'); return `${String(d.getDate()).padStart(2,'0')} ${MONTHS[d.getMonth()]} ${d.getFullYear()} · ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()]}`; }
+
+  // ---------- GANTT RENDER (default) ----------
+  function renderGantt(){
+    const days = dateRange(document.getElementById('rota-from').value, document.getElementById('rota-to').value);
+    const tbl = document.getElementById('gantt-table');
+    if(!days.length){ tbl.innerHTML = `<tbody><tr><td style="padding:20px;color:var(--text-faint);">Select a valid date range.</td></tr></tbody>`; return; }
+
+    let head = `<thead><tr><th class="role-col">Role</th>`;
+    days.forEach(d=>{
+      const isT = d.key===todayKey;
+      head += `<th class="${isT?'today-col':''}">${d.day} ${d.mon}<span class="dow">${d.dow}</span></th>`;
+    });
+    head += `</tr></thead>`;
+
+    let body = `<tbody>`;
+    rotaRoles.forEach(role=>{
+      body += `<tr><td class="role-name"><div class="role-wrap"><span class="role-dot ${role.dot}"></span>${role.label}</div></td>`;
+      days.forEach(d=>{
+        const name = (assignments[d.key]||{})[role.key];
+        const isT = d.key===todayKey;
+        const cell = name
+          ? `<span class="gantt-chip ${role.chip}">${uava(name)}<span class="nm">${name}</span></span>`
+          : `<span class="gantt-empty">+</span>`;
+        body += `<td class="gantt-cell ${isT?'today-col':''}" onclick="openAssign('${role.key}','${role.label}','${d.key}')">${cell}</td>`;
+      });
+      body += `</tr>`;
+    });
+    body += `</tbody>`;
+    tbl.innerHTML = head + body;
+
+    renderRotaTable(days); // keep table view in sync
+  }
+
+  // ---------- TABLE RENDER (secondary; dates = rows) ----------
+  function renderRotaTable(days){
+    const rb=document.getElementById('rota-body');
+    rb.innerHTML='';
+    days.forEach(d=>{
+      const a = assignments[d.key]||{};
+      const cell = (roleKey,roleLabel)=>{
+        const name=a[roleKey];
+        const inner = name ? `<div class="user-cell">${uava(name)}<span>${name}</span></div>` : `<span class="assign-empty">— unassigned —</span>`;
+        return `<td class="assign-cell" onclick="openAssign('${roleKey}','${roleLabel}','${d.key}')">${inner}</td>`;
+      };
+      rb.innerHTML+=`<tr class="${d.weekend?'weekend':''} ${d.key===todayKey?'today-row':''}">
+        <td class="date-c">${String(d.day).padStart(2,'0')} ${d.mon} 26</td>
+        <td class="day-c">${d.dow}</td>
+        ${cell('first','First Line')}
+        ${cell('second','Second Line')}
+        ${cell('esc','Escalation Manager')}
+        <td><div class="iconbtn" title="Add note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></div></td>
+      </tr>`;
+    });
+  }
+
+  // ---------- ASSIGNMENT POPUP ----------
+  let assignCtx = { role:null, dateKey:null };
+  function openAssign(roleKey, roleLabel, dateKey){
+    assignCtx = { role:roleKey, dateKey };
+    document.getElementById('ra-date').value = fmtLong(dateKey);
+    document.getElementById('ra-role-label').value = roleLabel;
+    const sel = document.getElementById('ra-engineer');
+    const current = (assignments[dateKey]||{})[roleKey] || '';
+    sel.innerHTML = `<option value="">— Unassigned —</option>` + teamRoster.map(n=>`<option ${n===current?'selected':''}>${n}</option>`).join('');
+    document.getElementById('m-reassign').classList.add('open');
+  }
+  function saveAssign(){
+    const name = document.getElementById('ra-engineer').value;
+    if(!assignments[assignCtx.dateKey]) assignments[assignCtx.dateKey] = {};
+    if(name) assignments[assignCtx.dateKey][assignCtx.role] = name;
+    else delete assignments[assignCtx.dateKey][assignCtx.role];
+    closeModal('m-reassign');
+    renderGantt();
+    if(typeof renderSAGantt==='function') renderSAGantt();
+  }
+
+  // ---------- ROTA VIEW TOGGLE (Gantt default) ----------
+  function setRotaView(v){
+    document.getElementById('rota-gantt-view').style.display = v==='gantt'?'block':'none';
+    document.getElementById('rota-table-view').style.display = v==='table'?'block':'none';
+    document.getElementById('rv-gantt').classList.toggle('active', v==='gantt');
+    document.getElementById('rv-table').classList.toggle('active', v==='table');
+  }
+
+  renderGantt(); // initial paint (Gantt is default)
+
+  // ---------- USERS (global) ----------
+  const usersGlobal=[
+    ['Aaron Teoh','aaron.teoh@bnpparibas.com','+65 9123 4567',['2S ADM Support'],['First Line']],
+    ['Karan Mehta','karan.mehta@bnpparibas.com','+65 9234 5678',['2S ADM Support','2S APAC Core'],['Second Line']],
+    ['Pranay Kapoor','pranay.kapoor@bnpparibas.com','+65 9345 6789',['2S ADM Support'],['Escalation']],
+    ['Ravi Sharma','ravi.sharma@bnpparibas.com','+65 9456 7890',['2S ADM Support'],['First Line','Second Line']],
+    ['Vikram Patel','vikram.patel@bnpparibas.com','+65 9567 8901',['2S FX Support'],['Second Line','Escalation']],
+  ];
+  const ugb=document.getElementById('users-body');
+  usersGlobal.forEach(([name,em,mob,tms,roles])=>{
+    ugb.innerHTML+=`<tr>
+      <td><div class="user-cell">${uava(name)}<span style="font-weight:600;">${name}</span></div></td>
+      <td>${em}</td><td style="font-variant-numeric:tabular-nums;">${mob}</td>
+      <td>${tms.map(t=>`<span class="badge b-gray">${t}</span>`).join(' ')}</td>
+      <td>${roleBadges(roles)}</td>
+      <td><div class="row-actions">
+        <div class="iconbtn" onclick="openModal('m-member')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></div>
+        <div class="iconbtn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>
+      </div></td>
+    </tr>`;
+  });
+
+  // ---------- APPLICATIONS (global) ----------
+  const appsGlobal=[
+    ['APS Gateway','Core Banking',['2S ADM Support','2S APAC Core'],'PROD','High',true],
+    ['FX Connect','FX Team',['2S FX Support'],'PROD','High',true],
+    ['Livewire','GSS',['2S ADM Support'],'PROD','Medium',true],
+    ['Murex','Rates',['2S Murex Ops'],'PROD','High',true],
+    ['SettleHub','Operations',['2S EMEA Cash'],'UAT','Low',false],
+  ];
+  const gab=document.getElementById('globalapps-body');
+  appsGlobal.forEach(([app,owner,tms,env,crit,active])=>{
+    gab.innerHTML+=`<tr>
+      <td><span style="font-weight:600;">${app}</span></td>
+      <td>${owner}</td>
+      <td>${tms.map(t=>`<span class="badge b-gray">${t}</span>`).join(' ')}</td>
+      <td>${envBadge(env)}</td><td>${critBadge(crit)}</td>
+      <td><span class="dot-active"><span class="dot ${active?'on':'off'}"></span>${active?'Active':'Inactive'}</span></td>
+      <td><div class="row-actions">
+        <div class="iconbtn" onclick="openModal('m-app')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></div>
+        <div class="iconbtn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>
+      </div></td>
+    </tr>`;
+  });
+
+  // ====================================================
+  // WELCOME SCREEN: search directory (apps + teams)
+  // ====================================================
+  // {name,type,team,emailDL,hotline,escl:[{lvl,name}]}
+  const directory = [
+    { name:'APS Gateway', type:'app', team:'2S ADM Support', emailDL:'adm.support@bnpparibas.com', hotline:'+65 6210 1234',
+      escl:[{lvl:'L1',name:'Aaron Teoh'},{lvl:'L2',name:'Karan Mehta'},{lvl:'L3',name:'Pranay Kapoor'}] },
+    { name:'FX Connect', type:'app', team:'2S FX Support', emailDL:'fx.support@bnpparibas.com', hotline:'+65 6210 5678',
+      escl:[{lvl:'L1',name:'Keiko Tanaka'},{lvl:'L2',name:'Marcus Webb'},{lvl:'L3',name:'Vikram Patel'}] },
+    { name:'Livewire', type:'app', team:'2S ADM Support', emailDL:'adm.support@bnpparibas.com', hotline:'+65 6210 1234',
+      escl:[{lvl:'L1',name:'Ravi Sharma'},{lvl:'L2',name:'Karan Mehta'},{lvl:'L3',name:'Pranay Kapoor'}] },
+    { name:'Murex', type:'app', team:'2S Murex Ops', emailDL:'murex.ops@bnpparibas.com', hotline:'+65 6210 9012',
+      escl:[{lvl:'L1',name:'Daniel Foo'},{lvl:'L2',name:'Anita Desai'},{lvl:'L3',name:'Sathesh Anbanandham'}] },
+    { name:'2S ADM Support', type:'team', team:'2S ADM Support', emailDL:'adm.support@bnpparibas.com', hotline:'+65 6210 1234',
+      escl:[{lvl:'L1',name:'Aaron Teoh'},{lvl:'L2',name:'Karan Mehta'},{lvl:'L3',name:'Pranay Kapoor'}] },
+    { name:'2S FX Support', type:'team', team:'2S FX Support', emailDL:'fx.support@bnpparibas.com', hotline:'+65 6210 5678',
+      escl:[{lvl:'L1',name:'Keiko Tanaka'},{lvl:'L2',name:'Marcus Webb'},{lvl:'L3',name:'Vikram Patel'}] },
+    { name:'2S AMER APS', type:'team', team:'2S AMER APS', emailDL:'amer.aps@bnpparibas.com', hotline:'+1 212 555 0100',
+      escl:[{lvl:'L1',name:'Tom Becker'},{lvl:'L2',name:'Sara Okafor'},{lvl:'L3',name:'Diego Martín'}] },
+  ];
+
+  function typeBadge(t){ return `<span class="badge ws-typebadge-${t}">${t==='app'?'App':'Team'}</span>`; }
+  function wsSearch(){
+    const q=(document.getElementById('ws-input').value||'').toLowerCase().trim();
+    const type=document.getElementById('ws-type').value;
+    const rows=directory.filter(d=>(type==='all'||d.type===type) && (!q || d.name.toLowerCase().includes(q) || d.team.toLowerCase().includes(q)));
+    const tb=document.getElementById('ws-results');
+    if(!rows.length){
+      tb.innerHTML=`<tr><td colspan="6"><div class="ws-empty">No application or team matches "<strong>${q}</strong>".</div></td></tr>`;
+    } else {
+      tb.innerHTML=rows.map(d=>`<tr>
+        <td><span class="ws-name">${d.name}</span></td>
+        <td>${typeBadge(d.type)}</td>
+        <td>${d.team}</td>
+        <td><a class="link">${d.emailDL}</a></td>
+        <td style="font-variant-numeric:tabular-nums;">${d.hotline}</td>
+        <td><span class="ws-view-btn" onclick="cbAsk('${d.name}')">Ask bot →</span></td>
+      </tr>`).join('');
+    }
+    document.getElementById('ws-hint').textContent = q ? `${rows.length} result(s) for "${q}".` : 'Showing all entries. Type to filter.';
+  }
+
+  // ====================================================
+  // CHATBOT: structured support response
+  // ====================================================
+  function cbAppend(html, who){
+    const body=document.getElementById('cb-body');
+    body.innerHTML += `<div class="cb-msg ${who}"><div class="cb-bubble">${html}</div></div>`;
+    body.scrollTop = body.scrollHeight;
+  }
+  function supportCard(d){
+    const escl = d.escl.map(e=>`<div class="e ${e.lvl.toLowerCase()}"><span class="lv">${e.lvl}</span>${e.name}</div>`).join('');
+    return `<div class="cb-card">
+      <div class="cb-card-head"><span class="ty">${d.type==='app'?'Application':'Team'} support</span><div class="nm">${d.name}</div></div>
+      <div class="cb-card-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="lbl">Team</span><span class="val">${d.team}</span></div>
+      <div class="cb-card-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg><span class="lbl">Email DL</span><span class="val">${d.emailDL}</span></div>
+      <div class="cb-card-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span class="lbl">Hotline</span><span class="val">${d.hotline}</span></div>
+      <div class="cb-card-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg><span class="lbl">Escalation</span><div class="cb-escl">${escl}</div></div>
+    </div>`;
+  }
+  function cbRespond(query){
+    const q=query.toLowerCase().trim();
+    const hit = directory.find(d=>d.name.toLowerCase()===q) || directory.find(d=>d.name.toLowerCase().includes(q) || d.team.toLowerCase().includes(q));
+    setTimeout(()=>{
+      if(hit){
+        cbAppend(`Here are the support details for <em>${hit.name}</em>:`, 'bot');
+        cbAppend(supportCard(hit), 'bot');
+      } else {
+        cbAppend(`I couldn't find an application or team matching <em>${query}</em>. Try an exact app or team name, e.g. "APS Gateway" or "2S FX Support".`, 'bot');
+      }
+    }, 350);
+  }
+  function cbSend(){
+    const input=document.getElementById('cb-text');
+    const v=input.value.trim();
+    if(!v) return;
+    cbAppend(v, 'user');
+    input.value='';
+    cbRespond(v);
+  }
+  function cbAsk(name){
+    // jump to portal welcome + chatbot if not already there
+    if(!document.getElementById('page-welcome').classList.contains('active')){ goPortal(); }
+    cbAppend(name, 'user');
+    cbRespond(name);
+  }
+
+  // ====================================================
+  // STANDALONE TEAM ROTA (reuses admin rota model, read-only)
+  // ====================================================
+  function renderSAGantt(){
+    const days = dateRange(document.getElementById('sa-from').value, document.getElementById('sa-to').value);
+    const tbl = document.getElementById('sa-gantt-table');
+    if(!days.length){ tbl.innerHTML=`<tbody><tr><td style="padding:20px;color:var(--text-faint);">Select a valid date range.</td></tr></tbody>`; return; }
+    let head=`<thead><tr><th class="role-col">Role</th>`;
+    days.forEach(d=>{ const isT=d.key===todayKey; head+=`<th class="${isT?'today-col':''}">${d.day} ${d.mon}<span class="dow">${d.dow}</span></th>`; });
+    head+=`</tr></thead>`;
+    let body=`<tbody>`;
+    rotaRoles.forEach(role=>{
+      body+=`<tr><td class="role-name"><div class="role-wrap"><span class="role-dot ${role.dot}"></span>${role.label}</div></td>`;
+      days.forEach(d=>{
+        const name=(assignments[d.key]||{})[role.key]; const isT=d.key===todayKey;
+        const cell = name ? `<span class="gantt-chip ${role.chip}">${uava(name)}<span class="nm">${name}</span></span>` : `<span class="gantt-empty">+</span>`;
+        body+=`<td class="gantt-cell ${isT?'today-col':''}" onclick="openAssign('${role.key}','${role.label}','${d.key}')">${cell}</td>`;
+      });
+      body+=`</tr>`;
+    });
+    body+=`</tbody>`;
+    tbl.innerHTML=head+body;
+
+    // table view sync
+    const tb=document.getElementById('sa-table-body'); tb.innerHTML='';
+    days.forEach(d=>{
+      const a=assignments[d.key]||{};
+      const cell=(rk,rl)=>{ const n=a[rk]; const inner=n?`<div class="user-cell">${uava(n)}<span>${n}</span></div>`:`<span class="assign-empty">— unassigned —</span>`; return `<td class="assign-cell" onclick="openAssign('${rk}','${rl}','${d.key}')">${inner}</td>`; };
+      tb.innerHTML+=`<tr class="${d.weekend?'weekend':''} ${d.key===todayKey?'today-row':''}"><td class="date-c">${String(d.day).padStart(2,'0')} ${d.mon} 26</td><td class="day-c">${d.dow}</td>${cell('first','First Line')}${cell('second','Second Line')}${cell('esc','Escalation Manager')}</tr>`;
+    });
+  }
+  function setSAView(v){
+    document.getElementById('sa-gantt-view').style.display=v==='gantt'?'block':'none';
+    document.getElementById('sa-table-view').style.display=v==='table'?'block':'none';
+    document.getElementById('sav-gantt').classList.toggle('active',v==='gantt');
+    document.getElementById('sav-table').classList.toggle('active',v==='table');
+  }
+
+  // initial paint of welcome
+  wsSearch();
+</script>
+</body>
+</html>
