@@ -2,6 +2,6 @@
 
 - **Version**: Angular 17+ (Strict TypeScript mode)
 - **Architecture**: Standalone components only. Do NOT use NgModules.
-- **State Management**: Do Use Angular Signals (`signal`, `computed`, `effect`) for state. 
-- **Control Flow**: Do Use modern block template syntax (`@if`, `@for`, `@switch`).  use `*ngIf` or `*ngFor`.
+- **State Management**: Use regular class properties and getters. No signals or computed().
+- **Control Flow**: Use structural directives (`*ngIf`, `*ngFor`, `*ngSwitch`). Import `NgIf`, `NgFor` from `@angular/common`.
 - **Styling**: Standard CSS. Keep components modular.

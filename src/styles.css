@@ -1,3 +1,6 @@
+/* Angular Material pre-built theme — must come before everything else */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
 /* Global styles — apply to the entire app */
 
 :root {
@@ -30,4 +33,280 @@ body {
   color: var(--text);
   font-size: 13px;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-family: var(--sans);
+  white-space: nowrap;
+  transition: background 0.1s, border-color 0.1s;
+}
+.btn:hover { background: var(--row-hover); border-color: var(--text-faint); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn svg { width: 13px; height: 13px; }
+
+.btn-primary { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+.btn-primary:hover { background: var(--emerald-hover); border-color: var(--emerald-hover); }
+
+.btn-sm { padding: 5px 10px; font-size: 11.5px; }
+
+/* ── Form fields ──────────────────────────────────────── */
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 5px;
+}
+.req { color: var(--error); }
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-size: 12.5px;
+  color: var(--text);
+  font-family: var(--sans);
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 2px var(--emerald-soft);
+}
+
+/* ── Search input with icon ───────────────────────────── */
+.search { position: relative; }
+.search input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 10px 7px 31px;
+  font-size: 12px;
+  color: var(--text);
+  font-family: var(--sans);
+}
+.search input:focus {
+  outline: none;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 2px var(--emerald-soft);
+}
+.search svg {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+/* ── Avatar circle ────────────────────────────────────── */
+.uava {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.av0 { background: #0e7490; }
+.av1 { background: #7c3aed; }
+.av2 { background: #be185d; }
+.av3 { background: #15803d; }
+.av4 { background: #b45309; }
+.av5 { background: #1d4ed8; }
+.av6 { background: #9f1239; }
+
+/* ── Status hint bar ──────────────────────────────────── */
+.ag-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--text-3);
+  background: #f9fafb;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+}
+.ag-hint svg { width: 14px; height: 14px; color: var(--text-faint); flex-shrink: 0; }
+.ag-hint.ok      { background: var(--emerald-soft); border-color: #bbf7d0; color: #166534; }
+.ag-hint.ok svg  { color: var(--success); }
+.ag-hint.loading { background: #fef3c7; border-color: #fde68a; color: #92400e; }
+.ag-hint.loading svg { color: var(--warning); }
+
+/* ── Transfer pane layout ─────────────────────────────── */
+.transfer {
+  display: grid;
+  grid-template-columns: 1fr 52px 1fr;
+  gap: 14px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+
+.tpane {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
+  overflow: hidden;
+}
+
+.tpane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: #f9fafb;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.tpane-count {
+  background: #9ca3af;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 9px;
+}
+.tpane-count.on { background: var(--emerald); }
+
+.tpane-search {
+  position: relative;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.tpane-search input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px 6px 30px;
+  font-size: 12px;
+  font-family: var(--sans);
+  color: var(--text);
+}
+.tpane-search input:focus {
+  outline: none;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 2px var(--emerald-soft);
+}
+.tpane-search svg {
+  position: absolute;
+  left: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 13px;
+  height: 13px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.tpane-list { flex: 1; overflow-y: auto; padding: 5px; }
+
+/* ── Transfer row (each member) ───────────────────────── */
+.xfer-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  border: 1px solid transparent;
+}
+.xfer-row:hover { background: var(--row-hover); }
+.xfer-row.sel   { background: var(--emerald-soft); border-color: #bbf7d0; }
+
+.xfer-row .who { line-height: 1.25; min-width: 0; flex: 1; }
+.xfer-row .who .n { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xfer-row .who .e { font-size: 10.5px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.snow-tag {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-faint);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.xfer-empty {
+  padding: 28px 14px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+/* ── Arrow buttons (center column) ───────────────────── */
+.transfer-arrows {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.xfer-btn {
+  width: 38px;
+  height: 34px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: var(--emerald);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  transition: background 0.1s;
+}
+.xfer-btn:hover { background: var(--emerald-hover); }
+.xfer-btn svg   { width: 16px; height: 16px; }
+
+/* ── Page head / section head ─────────────────────────── */
+.page-head,
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 16px;
+}
+.page-head h1, .section-head h2 { font-size: 18px; font-weight: 700; }
+.meta { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+/* ── Form footer ──────────────────────────────────────── */
+.form-foot {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
 }

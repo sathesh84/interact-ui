@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes),
+    // Angular 22: animations are built-in by default, no provider needed
   ]
 };
